@@ -1,0 +1,2027 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>SmartSwitch </title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💡</text></svg>">
+<style>
+:root{
+  --bg: linear-gradient(180deg,#0f1030 0%, #0b1538 100%);
+  --card: rgba(255,255,255,0.03);
+  --glass: rgba(255,255,255,0.09);
+  --accent1: #7fb1ff;
+  --accent2: #9a6bff;
+  --muted: rgba(255,255,255,0.96);
+  --muted2: rgba(255,255,255,0.55);
+  --nav-height:92px;
+  --max-width:980px;
+  --soft-shadow: 0 10px 30px rgba(13,18,46,0.55);
+  --blur: 8px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;outline:none}
+html,body{height:100%;margin:0;background:var(--bg);color:var(--muted);font-family:Inter,system-ui,Roboto,Arial}
+body{padding:0;margin:0}
+#main{max-width:var(--max-width);margin:14px auto;padding:12px;padding-bottom:calc(var(--nav-height) + 32px)}
+
+/* Header */
+.header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+.brand{display:flex;align-items:center;gap:12px}
+.mark{width:52px;height:52px;border-radius:12px;background:linear-gradient(135deg,var(--accent1),var(--accent2));display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 8px 30px rgba(122,57,255,0.06)}
+.mark img{width:100%;height:100%;object-fit:cover}
+.brand-title{font-size:18px;font-weight:700}
+.brand-sub{font-size:12px;color:var(--muted2)}
+
+/* WiFi round icon */
+.wifi-btn{width:48px;height:48px;border-radius:12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;position:relative;cursor:pointer;transition:all .18s}
+.wifi-btn.connected{background:linear-gradient(135deg,#b7f7d4,#7df2a3);box-shadow:0 12px 32px rgba(125,242,163,0.12)}
+.wifi-btn.disconnected{background:linear-gradient(135deg,#ff9a9a,#ff5c5c);box-shadow:0 12px 32px rgba(255,92,92,0.12)}
+.wifi-arc{position:absolute;border-radius:50%;border-top:3px solid rgba(255,255,255,0.95);border-left:3px solid transparent;border-right:3px solid transparent;border-bottom:3px solid transparent;opacity:0.95;animation: wifiPulse 2s infinite ease-in-out}
+.wifi-arc:nth-child(2) { animation-delay: 0.2s; }
+.wifi-arc:nth-child(3) { animation-delay: 0.4s; }
+.wifi-a1{width:14px;height:14px;bottom:8px}
+.wifi-a2{width:24px;height:24px;bottom:3px}
+.wifi-a3{width:34px;height:34px;bottom:-3px}
+.wifi-dot{width:7px;height:7px;background:white;border-radius:50%;position:absolute;bottom:15px}
+.wifi-btn.connected .wifi-arc, .wifi-btn.connected .wifi-dot{animation:pulse 1.8s infinite ease-in-out}
+@keyframes pulse{0%{opacity:1;transform:scale(1)}50%{opacity:.78;transform:scale(1.04)}100%{opacity:1;transform:scale(1)}}
+
+/* Instagram-like Logo Animation */
+@keyframes logoEntrance {
+  0% {
+    transform: scale(0.2);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes wavePulse {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.5);
+    opacity: 0;
+  }
+}
+
+@keyframes buttonPulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.8);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+  }
+}
+
+@keyframes bulbGlow {
+  0% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  50% {
+    transform: scale(1.05);
+    filter: brightness(1.2);
+  }
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+}
+
+@keyframes wifiPulse {
+  0% {
+    opacity: 0.6;
+    transform: scale(0.95);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 0.6;
+    transform: scale(0.95);
+  }
+}
+
+/* CSS Logo */
+.mark-css {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, var(--accent1), var(--accent2));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(122,57,255,0.15);
+  position: relative;
+  animation: logoEntrance 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  opacity: 0;
+}
+
+.logo-icon {
+  position: relative;
+  width: 32px;
+  height: 32px;
+}
+
+.logo-circle {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 2px solid white;
+  animation: logoEntrance 1.2s 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  opacity: 0;
+}
+
+.logo-inner {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: white;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  animation: logoEntrance 1.2s 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.logo-wave {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: wavePulse 2s infinite ease-out;
+  opacity: 0;
+  animation-delay: 0.6s;
+  animation-fill-mode: forwards;
+}
+
+.logo-wave:nth-child(2) {
+  animation-delay: 0.9s;
+}
+
+.logo-wave:nth-child(3) {
+  animation-delay: 1.2s;
+}
+
+/* Cards */
+.card{background:linear-gradient(180deg, rgba(255,255,255,0.014), rgba(255,255,255,0.008));border-radius:14px;padding:12px;border:1px solid var(--glass);backdrop-filter: blur(var(--blur));box-shadow:var(--soft-shadow);margin-bottom:12px}
+.status-row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.pres-left{display:flex;align-items:center;gap:8px}
+.pres-dot{width:12px;height:12px;border-radius:50%;background:#2a2a42}
+.pres-dot.on{background:#4ef0a0;box-shadow:0 6px 18px rgba(78,240,160,0.08)}
+.small{font-size:13px;color:var(--muted2)}
+
+/* Lights grid fixed 3-in-row */
+.lights-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:12px;align-items:start}
+.light-block{text-align:center;cursor:pointer}
+.circle{width:86px;height:86px;border-radius:999px;margin:0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.06);transition:all .16s}
+.circle:active{transform:translateY(-3px) scale(.98)}
+.bulb{font-size:36px;transition:all .22s;animation: bulbGlow 3s infinite ease-in-out}
+.inner-status{font-size:12px;font-weight:700;color:var(--muted2)}
+.light-block.on .circle{background:linear-gradient(135deg,#fff2c2,#ffd17a);border:1px solid rgba(255,255,255,0.16);box-shadow:0 16px 60px rgba(255,200,100,0.12)}
+.light-block.on .bulb{transform:scale(1.12);filter:brightness(1.55) saturate(1.4);text-shadow:0 8px 22px rgba(255,190,60,0.12);animation: bulbGlow 1.5s infinite ease-in-out}
+.nameBelow{margin-top:8px;font-weight:600;color:var(--muted)}
+
+/* last row center two */
+.last-row{grid-column:1 / -1;display:flex;justify-content:space-around;gap:18px;padding-top:6px}
+
+/* Modes top */
+.modes-row{display:flex;gap:10px;margin-top:12px}
+.mode{flex:1;padding:10px;border-radius:12px;background:rgba(255,255,255,0.02);text-align:center;cursor:pointer;transition:all .14s}
+.mode:hover{transform:translateY(-4px)}
+.mode.active{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#07213a;box-shadow:0 12px 30px rgba(122,57,255,0.08);font-weight:700}
+.setup-btn{padding:8px 12px;border-radius:10px;background:linear-gradient(90deg,var(--accent1),var(--accent2));border:0;color:#07213a;cursor:pointer;font-weight:700;box-shadow:0 8px 30px rgba(125,150,255,0.06)}
+
+/* bottom navbar */
+#navbar{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;width:94%;max-width:var(--max-width);z-index:9999}
+.bottom-nav{display:flex;justify-content:space-between;align-items:center;padding:12px;border-radius:999px;background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.04);width:100%;box-shadow:0 8px 30px rgba(0,0,0,0.6);height:var(--nav-height);backdrop-filter: blur(12px);-webkit-backdrop-filter: blur(12px);}
+.nav-item{flex:1;text-align:center;padding:6px 6px;border-radius:12px;color:var(--muted2);cursor:pointer;transition:all .14s}
+.nav-item.active{color:#07213a;background:linear-gradient(90deg,var(--accent1),var(--accent2));box-shadow:0 12px 30px rgba(125,150,255,0.10)}
+
+/* icons simple shapes */
+.home-icon{width:22px;height:22px;display:block;margin:0 auto;position:relative}
+.home-icon:before{content:"";position:absolute;left:50%;top:0;transform:translateX(-50%);width:0;height:0;border-left:12px solid transparent;border-right:12px solid transparent;border-bottom:12px solid rgba(255,255,255,0.95)}
+.home-icon:after{content:"";position:absolute;left:50%;top:10px;transform:translateX(-50%);width:18px;height:12px;border:3px solid rgba(255,255,255,0.95);border-top:none;border-radius:3px}
+.clock-icon{width:20px;height:20px;margin:0 auto;border:3px solid rgba(255,255,255,0.95);border-radius:50%;position:relative}
+.clock-icon:after{content:"";position:absolute;left:50%;top:40%;transform:translate(-50%,-50%);width:2px;height:6px;background:rgba(255,255,255,0.95)}
+.gear-icon{width:18px;height:18px;margin:0 auto;position:relative}
+.gear-ring{width:10px;height:10px;border:3px solid rgba(255,255,255,0.95);border-radius:50%;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:2}
+.gear-tooth{position:absolute;width:4px;height:10px;background:rgba(255,255,255,0.95);border-radius:3px;left:50%;top:50%;transform-origin:center -6px}
+.gear-tooth.t1{transform:translate(-50%,-50%) rotate(0deg)}.gear-tooth.t2{transform:translate(-50%,-50%) rotate(45deg)}.gear-tooth.t3{transform:translate(-50%,-50%) rotate(90deg)}.gear-tooth.t4{transform:translate(-50%,-50%) rotate(135deg)}.gear-tooth.t5{transform:translate(-50%,-50%) rotate(180deg)}.gear-tooth.t6{transform:translate(-50%,-50%) rotate(225deg)}.gear-tooth.t7{transform:translate(-50%,-50%) rotate(270deg)}.gear-tooth.t8{transform:translate(-50%,-50%) rotate(315deg)}
+
+/* Modern Tab Icons */
+.home-icon-modern {
+  width: 24px;
+  height: 24px;
+  position: relative;
+  margin: 0 auto;
+}
+
+.home-icon-modern:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-bottom: 10px solid rgba(255,255,255,0.95);
+}
+
+.home-icon-modern:after {
+  content: "";
+  position: absolute;
+  top: 10px;
+  left: 4px;
+  width: 16px;
+  height: 12px;
+  background: rgba(255,255,255,0.95);
+  border-radius: 2px;
+}
+
+.clock-icon-modern {
+  width: 22px;
+  height: 22px;
+  margin: 0 auto;
+  border: 2px solid rgba(255,255,255,0.95);
+  border-radius: 50%;
+  position: relative;
+}
+
+.clock-icon-modern:before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 2px;
+  height: 6px;
+  background: rgba(255,255,255,0.95);
+  transform: translate(-50%, -50%);
+}
+
+.clock-icon-modern:after {
+  content: "";
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  width: 6px;
+  height: 2px;
+  background: rgba(255,255,255,0.95);
+  transform: translate(-50%, -50%);
+}
+
+.gear-icon-modern {
+  width: 24px;
+  height: 24px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.gear-icon-modern::before {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255,255,255,0.95);
+  border-radius: 50%;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.gear-icon-modern::after {
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border: 2px solid rgba(255,255,255,0.95);
+  border-radius: 50%;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.gear-icon-modern .gear-tooth {
+  position: absolute;
+  width: 3px;
+  height: 6px;
+  background: rgba(255,255,255,0.95);
+  left: 50%;
+  top: -3px;
+  transform-origin: center 15px;
+}
+
+.gear-icon-modern .gear-tooth.t1 { transform: translate(-50%, -50%) rotate(0deg); }
+.gear-icon-modern .gear-tooth.t2 { transform: translate(-50%, -50%) rotate(30deg); }
+.gear-icon-modern .gear-tooth.t3 { transform: translate(-50%, -50%) rotate(60deg); }
+.gear-icon-modern .gear-tooth.t4 { transform: translate(-50%, -50%) rotate(90deg); }
+.gear-icon-modern .gear-tooth.t5 { transform: translate(-50%, -50%) rotate(120deg); }
+.gear-icon-modern .gear-tooth.t6 { transform: translate(-50%, -50%) rotate(150deg); }
+.gear-icon-modern .gear-tooth.t7 { transform: translate(-50%, -50%) rotate(180deg); }
+.gear-icon-modern .gear-tooth.t8 { transform: translate(-50%, -50%) rotate(210deg); }
+.gear-icon-modern .gear-tooth.t9 { transform: translate(-50%, -50%) rotate(240deg); }
+.gear-icon-modern .gear-tooth.t10 { transform: translate(-50%, -50%) rotate(270deg); }
+.gear-icon-modern .gear-tooth.t11 { transform: translate(-50%, -50%) rotate(300deg); }
+.gear-icon-modern .gear-tooth.t12 { transform: translate(-50%, -50%) rotate(330deg); }
+
+/* Centered modal styling + blur behind */
+.modal-back{position:fixed;inset:0;align-items:center;justify-content:center;background:rgba(0,0,0,0.45);z-index:1200}
+.modal{width:92%;max-width:520px;background:linear-gradient(180deg,#0f0720,#150926);border-radius:12px;padding:16px;border:1px solid rgba(255,255,255,0.06);box-shadow:0 30px 80px rgba(0,0,0,0.6);backdrop-filter: blur(6px);}
+
+/* mode choices grid */
+.mode-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.mode-chip{padding:10px;border-radius:10px;background:rgba(255,255,255,0.02);cursor:pointer;text-align:center;color:var(--muted2);border:1px solid rgba(255,255,255,0.03)}
+.mode-chip.selected{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#07213a}
+
+/* Connected mode states */
+.mode-chip.connected{background:linear-gradient(135deg, #4ef0a0, #2ed18a); color: #07213a; box-shadow: 0 0 15px rgba(78, 240, 160, 0.3);}
+
+
+.mode-chip:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.mode-chip.selected {
+  animation: modeSelectPulse 0.5s ease;
+}
+
+.mode-chip:active {
+  transform: scale(0.95);
+}
+
+/* Notification Modal Slide Down Animation */
+@keyframes slideDown {
+  0% { transform: translateY(-100%); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+.notification-modal-slide-down {
+  animation: slideDown 0.3s ease-out forwards;
+}
+
+/* mode selection */
+.mode-selection{padding:10px;border-radius:10px;background:rgba(255,255,255,0.02);cursor:pointer;text-align:center;color:var(--muted2);border:1px solid rgba(255,255,255,0.03);transition:all 0.2s ease}
+.mode-selection:hover{background:rgba(255,255,255,0.06);transform:translateY(-2px)}
+
+/* settings inner layout improvements (Rename + Tools kept in Settings) */
+.settings-tabs{display:flex;gap:8px;margin-bottom:12px}
+.settings-tab{padding:10px 12px;border-radius:999px;background:transparent;border:1px solid rgba(255,255,255,0.03);color:var(--muted2);cursor:pointer}
+.settings-tab.active{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#07213a}
+.rename-list{display:grid;grid-template-columns:1fr;gap:8px}
+.rename-row{display:flex;gap:8px;align-items:center}
+.rename-row input{flex:1;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--muted)}
+
+/* tools actions 2 per row */
+.tools-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tools-grid button{padding:10px;border-radius:10px;border:0;cursor:pointer;transition:all 0.3s ease;position:relative;overflow:hidden}
+.tools-grid button:active{transform:scale(0.95)}
+.tools-grid button:after{content:"";position:absolute;top:50%;left:50%;width:5px;height:5px;background:rgba(255,255,255,0.5);opacity:0;border-radius:100%;transform:scale(1,1) translate(-50%,-50%);transform-origin:50% 50%}
+.tools-grid button.pressed:after{animation:ripple 0.6s ease-out}
+
+/* Button animations */
+.btn, .ghost, .setup-btn {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.btn:active, .ghost:active, .setup-btn:active {
+  transform: scale(0.95);
+}
+
+.btn:after, .ghost:after, .setup-btn:after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  background: rgba(255,255,255,0.5);
+  opacity: 0;
+  border-radius: 100%;
+  transform: scale(1,1) translate(-50%,-50%);
+  transform-origin: 50% 50%;
+}
+
+.btn.pressed:after, .ghost.pressed:after, .setup-btn.pressed:after, .wifi-btn.pressed:after {
+  animation: ripple 0.6s ease-out;
+}
+
+/* Theme-colored buttons */
+.btn {
+  background: linear-gradient(90deg, var(--accent1), var(--accent2));
+  color: #07213a;
+  font-weight: 700;
+  border: none;
+}
+
+/* WiFi buttons */
+.wifi-btn {
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(125,150,255,0.06);
+}
+
+.wifi-btn:after {
+  content: "";
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, transparent 70%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ghost {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: var(--muted);
+}
+
+.setup-btn {
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: linear-gradient(90deg, var(--accent1), var(--accent2));
+  border: 0;
+  color: #07213a;
+  cursor: pointer;
+  font-weight: 700;
+  box-shadow: 0 8px 30px rgba(125,150,255,0.06);
+}
+
+/* Toggle switch */
+.toggle {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 30px;
+}
+
+.toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 34px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 22px;
+  width: 22px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+.toggle input:checked + .slider {
+  background: linear-gradient(90deg, var(--accent1), var(--accent2));
+}
+
+.toggle input:checked + .slider:before {
+  transform: translateX(30px);
+}
+
+/* logs improved */
+.log-list{max-height:240px;overflow:auto;padding:0;margin:0;list-style:none}
+.log-list li{padding:10px;border-bottom:1px solid rgba(255,255,255,0.03);font-size:13px;color:var(--muted2);line-height:1.35}
+
+/* Blynk status */
+#blynkStatus{font-weight:600}
+
+#blynkDisconnectBtn{margin-left:8px}
+
+@keyframes ripple {
+  0% {transform:scale(0,0);opacity:1}
+  100% {transform:scale(30,30);opacity:0}
+}
+
+/* Popup Notification */
+.notification-popup {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 320px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.014), rgba(255,255,255,0.008));
+  border-radius: 14px;
+  padding: 16px;
+  border: 1px solid rgba(255,255,255,0.09);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 10px 30px rgba(13,18,46,0.55);
+  z-index: 10000;
+  transform: translateX(120%);
+  transition: transform 0.3s ease-out;
+  cursor: pointer;
+}
+
+.notification-popup.show {
+  transform: translateX(0);
+}
+
+.notification-popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.notification-popup-title {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.notification-popup-close {
+  background: none;
+  border: none;
+  color: var(--muted2);
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.notification-popup-content {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.notification-popup-timestamp {
+  font-size: 11px;
+  color: var(--muted2);
+  margin-top: 8px;
+  text-align: right;
+}
+
+/* Mobile-like Notification Popup */
+.mobile-notification {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-100%);
+  width: 90%;
+  max-width: 400px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.014), rgba(255,255,255,0.008));
+  border-radius: 14px;
+  padding: 16px;
+  border: 1px solid rgba(255,255,255,0.09);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 10px 30px rgba(13,18,46,0.55);
+  z-index: 10000;
+  transition: transform 0.3s ease-out;
+  cursor: pointer;
+}
+
+.mobile-notification.show {
+  transform: translateX(-50%) translateY(0);
+}
+
+.mobile-notification-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.mobile-notification-title {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.mobile-notification-close {
+  background: none;
+  border: none;
+  color: var(--muted2);
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.mobile-notification-content {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.mobile-notification-timestamp {
+  font-size: 11px;
+  color: var(--muted2);
+  margin-top: 8px;
+  text-align: right;
+}
+</style>
+</head>
+<body>
+
+<div id="main">
+
+  <!-- Notification Container -->
+  <div id="notificationContainer"></div>
+
+  <!-- header -->
+  <div class="header">
+    <div class="brand">
+      <div class="mark-css">
+        <div class="logo-icon">
+          <div class="logo-circle"></div>
+          <div class="logo-inner"></div>
+          <div class="logo-wave"></div>
+          <div class="logo-wave"></div>
+          <div class="logo-wave"></div>
+        </div>
+      </div>
+      <div>
+        <div class="brand-title">SmartSwitch</div>
+        <div class="brand-sub">Classroom</div>
+        <div class="brand-sub"><a href="https://demonaquarius.github.io/smartlight/" style="color: var(--muted2); text-decoration: none;">GitHub Page</a></div>
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 12px;">
+      <div id="notificationBtn" class="wifi-btn" title="Notifications">
+        <div style="width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;">
+          <div style="width: 16px; height: 16px; border: 2px solid white; border-radius: 50%; position: relative;">
+            <div style="position: absolute; top: -4px; right: -4px; width: 8px; height: 8px; background: #4ef0a0; border-radius: 50%;"></div>
+            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 2px; height: 2px; background: white; border-radius: 50%;"></div>
+            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(45deg); width: 6px; height: 2px; background: white; border-radius: 1px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="wifiBtn" class="wifi-btn disconnected" title="Blynk Connection Status">
+        <div class="wifi-arc wifi-a3"></div>
+        <div class="wifi-arc wifi-a2"></div>
+        <div class="wifi-arc wifi-a1"></div>
+        <div class="wifi-dot"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- presence card -->
+  <div class="card">
+    <div class="status-row">
+      <div class="pres-left">
+        <div id="presDot" class="pres-dot"></div>
+        <div>
+          <div style="font-weight:700">Presence</div>
+          <div id="presText" class="small">No one</div>
+        </div>
+      </div>
+
+      <div id="connectionStatus" style="text-align:center;font-size:10px;color:var(--muted2)">Disconnected from Blynk</div>
+      <div style="text-align:right">
+        <div class="small">Last event</div>
+        <div id="lastEvent" class="small">—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOME -->
+  <div id="homePage">
+    <div class="card">
+      <div style="font-weight:700;margin-bottom:8px">Lights</div>
+      <div id="lightsGrid" class="lights-grid"></div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="font-weight:700">Modes</div>
+        <button id="openSetup" class="setup-btn">SETUP</button>
+      </div>
+      <div class="modes-row">
+        <div id="modeTeaching" class="mode" data-mode="teaching">Teaching Mode</div>
+        <div id="modeProjector" class="mode" data-mode="projector">Projector Mode</div>
+        <div id="modeEnergy" class="mode" data-mode="energy">Energy Saver</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TIMER -->
+  <div id="timerPage" style="display:none">
+    <div class="card">
+      <h3 style="margin:0 0 8px 0">Schedules</h3>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <input id="schStart" class="input" type="time">
+        <input id="schEnd" class="input" type="time">
+        <select id="schScene" class="input" style="width:200px"><option value="teaching">Teaching</option><option value="projector">Projector</option><option value="energy">Energy Saver</option></select>
+        <button id="addSchedule" class="btn">Add</button>
+        <button id="clearSchedules" class="ghost">Clear</button>
+      </div>
+      <div id="scheduleList" style="margin-top:10px;max-height:160px;overflow:auto"></div>
+    </div>
+
+    <div class="card" style="margin-top:12px">
+      <h3 style="margin:0 0 8px 0">Timers</h3>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <input id="tHours" class="input" type="number" min="0" max="23" placeholder="Hours" style="width:110px">
+        <input id="tMinutes" class="input" type="number" min="0" max="59" placeholder="Minutes" style="width:110px">
+        <input id="tSeconds" class="input" type="number" min="0" max="59" placeholder="Seconds" style="width:110px">
+        <select id="tLight" class="input" style="width:180px"></select>
+        <button id="addTimer" class="btn">Add Timer</button>
+        <button id="clearTimers" class="ghost">Clear</button>
+      </div>
+      <div id="timersList" style="margin-top:10px"></div>
+    </div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div id="settingsPage" style="display:none">
+    <div class="card">
+      <div class="settings-tabs">
+        <div class="settings-tab active" data-tab="tabSensors">Sensors</div>
+        <div class="settings-tab" data-tab="tabRename">Rename Lights</div>
+        <div class="settings-tab" data-tab="tabTools">Tools</div>
+      </div>
+
+      <div id="tabSensors">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div class="icon-circle">👤</div>
+            <div>
+              <div style="font-weight:700">PIR Sensor</div>
+              <div class="small">Motion trigger / Entry</div>
+            </div>
+          </div>
+          <label class="toggle"><input id="pirToggle" type="checkbox"><span class="slider"></span></label>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div class="icon-circle">📡</div>
+            <div>
+              <div style="font-weight:700">RCWL Radar</div>
+              <div class="small">Microwave presence detection</div>
+            </div>
+          </div>
+          <label class="toggle"><input id="rcwlToggle" type="checkbox"><span class="slider"></span></label>
+        </div>
+
+        <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+          <div style="flex:1" class="card">
+            <div style="font-weight:700">PIR Settings</div>
+            <div class="small" style="margin-top:8px">Delay (seconds)</div>
+            <input id="pirDelay" class="input" type="number" min="0" placeholder="e.g. 10" />
+          </div>
+
+          <div style="flex:1" class="card">
+            <div style="font-weight:700">RCWL Settings</div>
+            <div class="small" style="margin-top:8px">Range (%)</div>
+            <input id="rcwlRange" type="range" min="0" max="100" value="70" style="width:100%" />
+            <div id="rcwlVal" class="small" style="margin-top:6px">70%</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="tabRename" style="display:none">
+        <h3 style="margin-top:0">Rename Lights</h3>
+        <div id="renameList" class="rename-list" style="margin-top:8px"></div>
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <button id="saveRename" class="btn">Save</button>
+          <button id="resetNames" class="ghost">Reset Defaults</button>
+        </div>
+      </div>
+
+      <div id="tabTools" style="display:none">
+        <h3 style="margin-top:0">Tools & Quick Actions</h3>
+        
+        <!-- Blynk Integration Section -->
+        <div class="card" style="margin-bottom:12px">
+          <div style="font-weight:600;margin-bottom:8px">Blynk Integration</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;align-items:center;gap:8px">
+              <input type="text" id="blynkTokenInput" placeholder="Enter Blynk Auth Token" style="flex:1;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--muted)">
+              <button id="blynkConnectBtn" class="btn" style="padding:8px 12px">Connect</button>
+              <button id="blynkDisconnectBtn" class="ghost" style="padding:8px 12px">Disconnect</button>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <div class="small">Status:</div>
+              <div id="blynkStatus" class="small" style="color:#ff9a9a">Not connected</div>
+            </div>
+            <div class="small" style="color:#7fb1ff">Predefined token for 'smartboard' template is automatically loaded</div>
+          </div>
+        </div>
+        
+        <div class="tools-grid" style="margin-top:8px">
+          <button id="refreshBtn" class="btn">Refresh Device</button>
+          <button id="restartBtn" class="ghost">Restart Device</button>
+          <button id="clearLogsBtn" class="ghost">Clear Logs</button>
+          <button id="exportConfigBtn" class="btn">Export Config</button>
+        </div>
+
+        <div class="card" style="margin-top:12px">
+          <div style="font-weight:600;margin-bottom:8px">Logs (latest 10)</div>
+          <ul id="logs" class="log-list"></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div> <!-- end main -->
+<!-- bottom navbar -->
+<div id="navbar">
+  <div class="bottom-nav" role="navigation">
+    <div class="nav-item active" data-page="home"><div class="home-icon-modern"></div><div style="margin-top:8px;font-size:13px">Home</div></div>
+    <div class="nav-item" data-page="timer"><div class="clock-icon-modern"></div><div style="margin-top:8px;font-size:13px">Timer</div></div>
+    <div class="nav-item" data-page="settings"><div class="gear-icon-modern"><div class="gear-tooth t1"></div><div class="gear-tooth t2"></div><div class="gear-tooth t3"></div><div class="gear-tooth t4"></div><div class="gear-tooth t5"></div><div class="gear-tooth t6"></div><div class="gear-tooth t7"></div><div class="gear-tooth t8"></div><div class="gear-tooth t9"></div><div class="gear-tooth t10"></div><div class="gear-tooth t11"></div><div class="gear-tooth t12"></div></div><div style="margin-top:8px;font-size:13px">Settings</div></div>
+  </div>
+</div>
+
+<!-- Centered Mode Setup modal -->
+<div id="modeModal" class="modal-back" style="display: none;">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div style="font-weight:700" id="modeModalTitle">Mode Setup</div>
+      <button id="closeMode" class="ghost">Close</button>
+    </div>
+    <div style="margin-top:12px" class="mode-grid" id="modeModalGrid"></div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px">
+      <button id="modeSaveBtn" class="btn">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Blynk-only mode notification -->
+<div id="wifiModal" class="modal-back" style="display: none;">
+  <div class="modal">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div style="font-weight:700">Wi-Fi Manager</div>
+      <div id="wifiStatusText" class="small">Device Controlled via Blynk Cloud</div>
+    </div>
+
+    <div style="margin-top:16px">
+      <!-- WiFi list -->
+      <div style="margin-bottom:12px">
+        <div style="font-weight:600">Saved Wi-Fi Networks</div>
+        <div id="wifiListArea" style="margin-top:8px"></div>
+      </div>
+
+      <!-- Add / Edit form -->
+      <div style="display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap">
+        <input id="newSsid" placeholder="SSID" style="flex:1;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--muted)">
+        <input id="newPass" placeholder="Password" style="flex:1;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--muted)">
+        <button id="addWifiBtn" class="btn">Add / Save</button>
+      </div>
+
+      <div style="display:flex;gap:8px;align-items:center;margin-top:12px">
+        <button id="applyWifiBtn" class="btn">Apply Selected to Device</button>
+        <button id="setDefaultWifiBtn" class="ghost">Set Selected as Default</button>
+        <button id="exportWifiBtn" class="ghost">Export</button>
+      </div>
+
+      <hr style="border:none;border-top:1px solid rgba(255,255,255,0.04);margin-top:12px"/>
+
+      <div style="display:flex;gap:8px;align-items:center;margin-top:12px">
+        <div style="flex:1">
+          <div style="font-weight:600">Presence Auto-Off Timeout (seconds)</div>
+          <div class="small">When 'No presence' persists this long, lights will automatically be turned off.</div>
+        </div>
+        <input id="autoOffTimeout" type="number" min="0" step="1" placeholder="e.g. 120" style="width:140px;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--muted)">
+      </div>
+
+      <div style="display:flex;justify-content:center;margin-top:16px">
+        <button id="closeWifi" class="ghost">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Notification Modal (Device Notifications) -->
+<div id="notificationModal" class="modal-back" style="align-items: flex-start; padding-top: 20px; display: none;">
+  <div class="modal" style="height: 80vh; display: flex; flex-direction: column; margin-top: 0;">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div style="font-weight:700">Device Notifications</div>
+      <button id="closeNotification" class="ghost">Close</button>
+    </div>
+    
+    <div style="margin-top:16px; flex: 1; display: flex; flex-direction: column; overflow: hidden;">
+      <!-- ESP32 STATUS CARD -->
+      <div id="espStatusCard" class="card" style="margin-bottom:15px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+          <div style="font-size:16px;font-weight:600;">ESP32 Device Status</div>
+          <div id="espStatusDot" style="width:12px;height:12px;border-radius:50%;background:#ff6b6b;"></div>
+        </div>
+
+        <div class="small">Status: <strong id="espStatusText">Offline</strong></div>
+        <div class="small" style="margin-top:6px;">IP: <span id="espIp">—</span></div>
+        <div class="small" style="margin-top:6px;">Uptime: <span id="espUptime">—</span></div>
+        <div class="small" style="margin-top:6px;">Last Seen: <span id="espLastSeen">—</span></div>
+
+        <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:12px;">
+          <button id="requestEspStatusBtn" class="ghost">Request Status</button>
+          <button id="focusEspLogsBtn" class="btn">Show Logs</button>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:12px; display: flex; justify-content: space-between; align-items: center;">
+        <div style="font-weight:600;margin-bottom:8px">Connection Status</div>
+        <div id="connectionStatusDetail" class="small">Disconnected</div>
+      </div>
+      
+      <div class="card" style="margin-bottom:12px">
+        <div style="font-weight:600;margin-bottom:8px">Sensor Status</div>
+        <div class="small">PIR Sensor: <span id="pirStatus">Enabled</span></div>
+        <div class="small">RCWL Radar: <span id="rcwlStatus">Enabled</span></div>
+        <div class="small">Presence Detection: <span id="presenceStatus">No one detected</span></div>
+      </div>
+      
+      <div class="card" style="margin-bottom:12px; display: flex; justify-content: space-between; align-items: center;">
+        <div style="font-weight:600;margin-bottom:8px">Blynk</div>
+        <div id="blynkIntegrationStatus" class="small">Not connected</div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+console.log('Script is loading...');
+
+/* ---------- State & helpers ---------- */
+const STORAGE = 'smart_ui_final_v2';
+
+// Security module for token encryption
+const SecurityModule = {
+  encrypt: function(text, key) {
+    if (!text) return '';
+    try {
+      const encoder = new TextEncoder();
+      const data = encoder.encode(text);
+      const keyData = encoder.encode(key);
+      let result = new Uint8Array(data.length);
+      for (let i = 0; i < data.length; i++) {
+        result[i] = data[i] ^ keyData[i % keyData.length];
+      }
+      return btoa(String.fromCharCode(...result));
+    } catch (e) {
+      console.warn('Failed to encrypt token:', e.message);
+      return '';
+    }
+  },
+  decrypt: function(encryptedText, key) {
+    if (!encryptedText) return '';
+    try {
+      const decoder = new TextDecoder();
+      const data = new Uint8Array(atob(encryptedText).split('').map(c => c.charCodeAt(0)));
+      const keyData = new TextEncoder().encode(key);
+      let result = new Uint8Array(data.length);
+      for (let i = 0; i < data.length; i++) {
+        result[i] = data[i] ^ keyData[i % keyData.length];
+      }
+      return decoder.decode(result);
+    } catch (e) {
+      console.warn('Failed to decrypt token:', e.message);
+      return '';
+    }
+  },
+  generateDeviceKey: function() {
+    const fingerprint = [
+      navigator.userAgent,
+      navigator.language,
+      screen.width,
+      screen.height,
+      new Date().getTimezoneOffset()
+    ].join('|');
+    let hash = 0;
+    for (let i = 0; i < fingerprint.length; i++) {
+      const char = fingerprint.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash;
+    }
+    return 'key_' + Math.abs(hash).toString(36);
+  }
+};
+
+function defaultState(){
+  const names = ["Front Light","Board Light","Left Wall","Right Wall","Center 1","Center 2","Back Left","Back Right"];
+  return {
+    lights: names.map((n,i)=>({id:i,name:n,on:false,manual:false})),
+    modeProjector: Array(8).fill(false),
+    modeEnergy: Array(8).fill(false),
+    presence:false,pir:true,rcwl:true,pirDelay:5,rcwlRange:70,
+    schedules:[],timers:[],logs:[],wifiConnected:false,
+    // new: wifi creds manager — starts with your requested default
+    wifiCreds: [
+      { ssid: 'vivot3lite', pass: '12345678', note: 'default (vivot3lite)' }
+    ],
+    wifiSelected: 0,
+    wifiDefaultIndex: 0,
+    // auto-off timeout in seconds after 'no presence' to switch off lights
+    autoOffTimeout: 120,
+    lastESPInfo: { ip: null }, // store last ESP info (ip, uptime)
+    espOnline: false,
+    espIp: "—",
+    espUptime: "—",
+    espLastSeen: null,
+    // Track token invalid to avoid spam retries
+    tokenInvalid: false,
+    pollFailures: 0
+  };
+}
+let state = (()=>{ try{ const r = localStorage.getItem(STORAGE); return r? JSON.parse(r): defaultState(); }catch(e){ return defaultState(); } })();
+function saveState(){ localStorage.setItem(STORAGE, JSON.stringify(state)); }
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+function escapeHtml(s){ return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+/* ---------- Logging / Terminal ---------- */
+function log(msg) {
+  const entry = `${new Date().toLocaleString()} — ${msg}`;
+  state.logs.unshift(entry);
+  if (state.logs.length > 800) state.logs.length = 800;
+  saveState();
+  renderLogs();
+  const important = ['Connected to','Disconnected','Device connected','Device disconnected','OTA','Presence detected','No presence','Blynk connected','Blynk disconnected','Auto-off'];
+  if (important.some(k => msg.includes(k))) showPopupNotification('SmartBoard', msg);
+}
+
+/* Popup / mobile notifications */
+function showPopupNotification(title, message) {
+  let n = document.getElementById('notificationPopup');
+  if (!n) {
+    n = document.createElement('div');
+    n.id = 'notificationPopup';
+    n.className = 'notification-popup';
+    n.innerHTML = `<div class="notification-popup-header"><div class="notification-popup-title"></div><button class="notification-popup-close">×</button></div><div class="notification-popup-content"></div><div class="notification-popup-timestamp"></div>`;
+    document.body.appendChild(n);
+    n.querySelector('.notification-popup-close').addEventListener('click', ()=> n.classList.remove('show'));
+  }
+  n.querySelector('.notification-popup-title').textContent = title;
+  n.querySelector('.notification-popup-content').textContent = message;
+  n.querySelector('.notification-popup-timestamp').textContent = new Date().toLocaleTimeString();
+  n.classList.add('show');
+  setTimeout(()=> n.classList.remove('show'), 5000);
+}
+function showMobileNotification(title, message) { showPopupNotification(title,message); }
+
+/* Terminal helpers */
+function appendTerminalLine(line){
+  const out = document.getElementById('terminalOutput');
+  if (out) {
+    const node = document.createElement('div');
+    node.textContent = `${new Date().toLocaleTimeString()} ${line}`;
+    out.appendChild(node);
+    out.scrollTop = out.scrollHeight;
+  }
+  state.logs.unshift(`${new Date().toLocaleString()} — TERM: ${line}`);
+  if (state.logs.length>800) state.logs.length=800;
+  saveState();
+}
+
+/* ---------- Render UI pieces ---------- */
+function renderLights(){
+  const grid = $('#lightsGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  state.lights.slice(0,6).forEach(l => {
+    const el = document.createElement('div'); el.className = 'light-block' + (l.on? ' on':'');
+    el.innerHTML = `<div class="circle" data-id="${l.id}"><div class="bulb">💡</div><div class="inner-status">${l.on?'ON':'OFF'}</div></div><div class="nameBelow">${escapeHtml(l.name)}</div>`;
+    const circle = el.querySelector('.circle');
+    circle.addEventListener('click', ()=> toggleLightFromUI(l.id));
+    circle.addEventListener('contextmenu', e=> { e.preventDefault(); renamePrompt(l.id); });
+    grid.appendChild(el);
+  });
+  const lastRow = document.createElement('div'); lastRow.className='last-row';
+  state.lights.slice(6).forEach(l => {
+    const el = document.createElement('div'); el.className = 'light-block' + (l.on? ' on':'');
+    el.innerHTML = `<div class="circle" data-id="${l.id}"><div class="bulb">💡</div><div class="inner-status">${l.on?'ON':'OFF'}</div></div><div class="nameBelow">${escapeHtml(l.name)}</div>`;
+    const circle = el.querySelector('.circle');
+    circle.addEventListener('click', ()=> toggleLightFromUI(l.id));
+    circle.addEventListener('contextmenu', e=> { e.preventDefault(); renamePrompt(l.id); });
+    lastRow.appendChild(el);
+  });
+  grid.appendChild(lastRow);
+
+  const pd = $('#presDot'); if (pd) pd.classList.toggle('on', !!state.presence);
+  const pt = $('#presText'); if (pt) pt.textContent = state.presence? 'Someone':'No one';
+  saveState();
+}
+
+function renderLogs(){
+  const logsContainer = $('#logs');
+  if (!logsContainer) return;
+  logsContainer.innerHTML = '';
+  state.logs.slice(0,30).forEach(l => {
+    const li = document.createElement('li');
+    li.textContent = l;
+    logsContainer.appendChild(li);
+  });
+}
+
+function renderRenameList(){
+  const wrap = $('#renameList'); if (!wrap) return; wrap.innerHTML = '';
+  state.lights.forEach(l => {
+    const row = document.createElement('div'); row.className='rename-row';
+    row.innerHTML = `<div style="width:28px">${l.id+1}.</div><input data-rename="${l.id}" value="${escapeHtml(l.name)}">`;
+    wrap.appendChild(row);
+  });
+}
+
+function renderSchedules(){
+  const out = $('#scheduleList'); if(!out) return; out.innerHTML='';
+  state.schedules.forEach((s,i)=> {
+    const r = document.createElement('div'); r.style.padding='8px'; r.style.borderBottom='1px solid rgba(255,255,255,0.03)';
+    r.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center"><div><strong>${escapeHtml(s.start)}</strong> → <strong>${escapeHtml(s.end)}</strong> • ${escapeHtml(s.scene)}</div><div><button data-del="${i}" class="ghost">Delete</button></div></div>`;
+    out.appendChild(r);
+  });
+  $$('[data-del]').forEach(b => b.onclick = e=> { const i = +e.target.dataset.del; state.schedules.splice(i,1); saveState(); renderSchedules(); log('Schedule removed'); });
+}
+
+function renderTimers(){
+  const area = $('#timersList'); if(!area) return; area.innerHTML='';
+  state.timers.forEach((t,i)=> {
+    const d = document.createElement('div'); d.className='card'; d.style.display='flex'; d.style.justifyContent='space-between'; d.style.alignItems='center'; d.style.marginBottom='8px';
+    d.innerHTML = `<div><strong>${escapeHtml(t.name)}</strong><div class="small">${t.h}h ${t.m}m ${t.s}s</div></div><div><button data-deltimer="${i}" class="ghost">Remove</button></div>`;
+    area.appendChild(d);
+  });
+  $$('[data-deltimer]').forEach(b => b.onclick = e=> { const i=+e.target.dataset.deltimer; state.timers.splice(i,1); saveState(); renderTimers(); log('Timer removed'); });
+}
+
+function populateTimerSelect(){
+  const sel = $('#tLight'); if (!sel) return; sel.innerHTML='';
+  state.lights.forEach(l => { const o = document.createElement('option'); o.value = l.id; o.textContent = l.name; sel.appendChild(o); });
+}
+
+/* ---------- Rename / UI actions ---------- */
+function renamePrompt(id){
+  const cur = state.lights[id].name; const v = prompt('Rename light', cur);
+  if (v !== null && v.trim() !== '') { state.lights[id].name = v.trim(); saveState(); renderLights(); renderRenameList(); populateTimerSelect(); log(`Renamed light ${id+1} → ${v.trim()}`); }
+}
+
+function toggleLightFromUI(id){
+  const light = state.lights.find(l=>l.id===id);
+  if (!light) return;
+  light.on = !light.on;
+  light.manual = true;
+  saveState(); renderLights();
+  if (blynkConnected) {
+    sendToBlynk(`V${id}`, light.on?1:0).catch(e => {
+      log(`Failed to send toggle for V${id}: ${e.message || e}`);
+    });
+  }
+}
+
+/* ---------- Wi-Fi manager UI ---------- */
+function renderWifiList(){
+  const area = $('#wifiListArea'); if (!area) return; area.innerHTML='';
+  if (!state.wifiCreds || state.wifiCreds.length === 0) { area.innerHTML = '<div class="small">No saved networks</div>'; return; }
+  state.wifiCreds.forEach((w, idx) => {
+    const el = document.createElement('div'); el.style.display='flex'; el.style.justifyContent='space-between'; el.style.alignItems='center'; el.style.padding='8px'; el.style.borderBottom='1px solid rgba(255,255,255,0.03)';
+    el.innerHTML = `<div style="flex:1"><div style="font-weight:600">${escapeHtml(w.ssid)}</div><div class="small">${escapeHtml(w.note||'')}</div></div><div style="display:flex;gap:8px;align-items:center"><input type="radio" name="wifiSel" data-idx="${idx}" ${state.wifiSelected===idx?'checked':''} title="Select to apply"><button data-edit="${idx}" class="ghost" title="Edit">Edit</button><button data-del="${idx}" class="ghost" title="Delete">Delete</button></div>`;
+    area.appendChild(el);
+  });
+  $$('input[name="wifiSel"]').forEach(r => r.addEventListener('change', e => { state.wifiSelected = +e.target.dataset.idx; saveState(); }));
+  $$('[data-edit]').forEach(b => b.addEventListener('click', e => {
+    const idx = +e.target.dataset.edit;
+    $('#newSsid').value = state.wifiCreds[idx].ssid; $('#newPass').value = state.wifiCreds[idx].pass; $('#addWifiBtn').dataset.editing = idx;
+  }));
+  $$('[data-del]').forEach(b => b.addEventListener('click', e => {
+    const idx = +e.target.dataset.del; if (confirm('Delete network "'+state.wifiCreds[idx].ssid+'"?')) { state.wifiCreds.splice(idx,1); if (state.wifiSelected >= state.wifiCreds.length) state.wifiSelected = Math.max(0, state.wifiCreds.length-1); if (state.wifiDefaultIndex >= state.wifiCreds.length) state.wifiDefaultIndex = 0; saveState(); renderWifiList(); log('Wi-Fi credential deleted'); }
+  }));
+}
+
+/* add wifi */
+document.getElementById('addWifiBtn')?.addEventListener('click', () => {
+  const ssid = $('#newSsid').value.trim(); const pass = $('#newPass').value;
+  if (!ssid) { showMobileNotification('Error','SSID required'); return; }
+  if ($('#addWifiBtn').dataset.editing) {
+    const idx = +$('#addWifiBtn').dataset.editing;
+    state.wifiCreds[idx] = { ssid, pass, note: 'edited' };
+    delete $('#addWifiBtn').dataset.editing;
+    log('Wi-Fi updated: '+ssid);
+  } else {
+    state.wifiCreds.push({ ssid, pass, note: '' }); log('Wi-Fi added: ' + ssid);
+  }
+  $('#newSsid').value=''; $('#newPass').value='';
+  saveState(); renderWifiList();
+});
+
+/* Apply selected wifi */
+$('#applyWifiBtn')?.addEventListener('click', () => {
+  if (!state.wifiCreds || state.wifiCreds.length===0) { showMobileNotification('Error','No credentials saved'); return; }
+  const cred = state.wifiCreds[state.wifiSelected || 0];
+  if (!cred) { showMobileNotification('Error','Selected credential not found'); return; }
+  sendToBlynk('V30', cred.ssid).catch(()=>{}); // SSID
+  sendToBlynk('V31', cred.pass).catch(()=>{}); // PASS
+  setTimeout(()=> sendToBlynk('V32', 1).catch(()=>{}), 300);
+  showMobileNotification('Wi-Fi', `Sent SSID "${cred.ssid}" to device`);
+  log(`Applied Wi-Fi to device: ${cred.ssid}`);
+});
+
+/* Set default (UI) */
+$('#setDefaultWifiBtn')?.addEventListener('click', () => {
+  state.wifiDefaultIndex = state.wifiSelected || 0; saveState(); showMobileNotification('Default Wi-Fi', `Saved "${state.wifiCreds[state.wifiDefaultIndex].ssid}" as default`); log('Default Wi-Fi set');
+});
+
+/* Export wifi list */
+$('#exportWifiBtn')?.addEventListener('click', () => {
+  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state.wifiCreds, null, 2));
+  const a = document.createElement('a'); a.setAttribute('href', dataStr); a.setAttribute('download', 'wifi_creds.json'); document.body.appendChild(a); a.click(); a.remove();
+  showMobileNotification('Export', 'Wi-Fi list exported');
+});
+
+
+/* ---------- Timers / Schedules ---------- */
+$('#addTimer')?.addEventListener('click', () => {
+  const h = Math.max(0, parseInt($('#tHours').value||0)), m = Math.max(0, parseInt($('#tMinutes').value||0)), s = Math.max(0, parseInt($('#tSeconds').value||0));
+  const lid = parseInt($('#tLight').value||0);
+  if (h===0 && m===0 && s===0) { showMobileNotification('Error','Set duration'); return; }
+  const name = state.lights[lid].name;
+  state.timers.push({ name, h, m, s, light: lid, created: Date.now() }); saveState(); renderTimers(); log(`Timer set: ${name} ${h}h ${m}m ${s}s`);
+});
+$('#clearTimers')?.addEventListener('click', ()=> { state.timers=[]; saveState(); renderTimers(); log('Cleared timers'); });
+
+$('#addSchedule')?.addEventListener('click', ()=> {
+  const s = $('#schStart').value, e = $('#schEnd').value, sc = $('#schScene').value;
+  if (!s||!e) { showMobileNotification('Error','Pick start and end'); return; }
+  state.schedules.push({ start: s, end: e, scene: sc }); saveState(); renderSchedules(); log('Schedule added '+s+'-'+e+' '+sc);
+});
+$('#clearSchedules')?.addEventListener('click', ()=> { state.schedules=[]; saveState(); renderSchedules(); log('Schedules cleared'); });
+
+/* ---------- Mode modal (projector / energy / teaching) ---------- */
+function setupModeModal(){
+  // openSetup wired later in DOMContentLoaded
+}
+function openModeSelectionModal(){
+  $('#modeModal').style.display='flex'; $('#modeModalTitle').textContent='Select Mode to Setup';
+  const grid = $('#modeModalGrid'); grid.innerHTML = `<div class="mode-selection" data-mode="projector"><div class="mode-chip">Projector Mode</div></div><div class="mode-selection" data-mode="energy"><div class="mode-chip">Energy Saver</div></div>`;
+  $$('.mode-selection').forEach(el => el.addEventListener('click', ()=> openModeModal(el.dataset.mode)));
+  document.body.style.overflow='hidden';
+}
+function openModeModal(mode){
+  $('#modeModal').style.display='flex'; $('#modeModalTitle').textContent = `Select lights for ${mode[0].toUpperCase()+mode.slice(1)} Mode`; $('#modeModal').dataset.mode=mode;
+  const grid = $('#modeModalGrid'); grid.innerHTML='';
+  const arr = mode === 'projector' ? state.modeProjector : state.modeEnergy;
+  state.lights.forEach((l,i) => {
+    const d = document.createElement('div'); d.className = 'mode-chip' + (arr[i] ? ' selected' : ''); d.textContent = l.name; d.dataset.i = i; d.addEventListener('click', ()=> d.classList.toggle('selected'));
+    grid.appendChild(d);
+  });
+  document.body.style.overflow='hidden';
+}
+function saveModeSettings(){
+  const mode = $('#modeModal').dataset.mode || 'projector';
+  const sel = Array.from($('#modeModalGrid').querySelectorAll('.mode-chip.selected')).map(x=>+x.dataset.i);
+  if (mode === 'projector') state.modeProjector = state.modeProjector.map((v,i)=> sel.includes(i));
+  else state.modeEnergy = state.modeEnergy.map((v,i)=> sel.includes(i));
+  log(`${mode} saved`); saveState(); $('#modeModal').style.display='none'; document.body.style.overflow='';
+}
+
+/* ---------- Tools operations ---------- */
+function initToolsListeners(){
+  // Connect / disconnect Blynk
+  $('#blynkConnectBtn')?.addEventListener('click', ()=> {
+    addButtonAnimation('blynkConnectBtn');
+    const token = $('#blynkTokenInput').value.trim();
+    if (!token) { showPopupNotification('Error','Token required'); return; }
+    const deviceKey = SecurityModule.generateDeviceKey();
+    localStorage.setItem('blynkToken', SecurityModule.encrypt(token, deviceKey));
+    initBlynk(token);
+  });
+  $('#blynkDisconnectBtn')?.addEventListener('click', ()=> {
+    addButtonAnimation('blynkDisconnectBtn');
+    disconnectBlynk();
+  });
+
+  // sensor toggles
+  $('#pirToggle')?.addEventListener('change', e => { state.pir = !!e.target.checked; saveState(); log('PIR '+(state.pir?'enabled':'disabled')); if (blynkConnected) sendToBlynk('V11', state.pir?1:0); });
+  $('#rcwlToggle')?.addEventListener('change', e => { state.rcwl = !!e.target.checked; saveState(); log('RCWL '+(state.rcwl?'enabled':'disabled')); if (blynkConnected) sendToBlynk('V12', state.rcwl?1:0); });
+  $('#pirDelay')?.addEventListener('input', e=> { state.pirDelay = parseInt(e.target.value)||0; saveState(); });
+  $('#rcwlRange')?.addEventListener('input', e=> { state.rcwlRange = parseInt(e.target.value)||0; $('#rcwlVal').textContent = state.rcwlRange + '%'; saveState(); });
+
+  // terminal send
+  const tSend = document.getElementById('terminalSend'); const tInput = document.getElementById('terminalInput');
+  if (tSend && tInput) tSend.addEventListener('click', ()=> {
+    const v = tInput.value.trim(); if (!v) return;
+    appendTerminalLine(`<sent> ${v}`);
+    if (blynkConnected) sendToBlynk('V25', v).catch(()=> showMobileNotification('Error','Failed to send terminal line'));
+    tInput.value = '';
+  });
+  document.getElementById('terminalClear')?.addEventListener('click', ()=> { const out = document.getElementById('terminalOutput'); if (out) out.innerHTML=''; });
+}
+/* ---------- Small UI helpers ---------- */
+function addButtonAnimation(buttonId) {
+  const button = buttonId && document.getElementById(buttonId);
+  if (button) {
+    button.classList.add('pressed');
+    setTimeout(()=> button.classList.remove('pressed'), 500);
+  }
+}
+
+/* ---------- Blynk REST core ---------- */
+let blynkConnected = false;
+let blynkToken = '';
+let blynkPollInterval = null;
+const BLYNK_API_BASE = 'https://blynk.cloud/external/api';
+
+function setBlynkUIConnected(yes) {
+  blynkConnected = !!yes;
+  const statusEl = document.getElementById('blynkStatus');
+  if (statusEl) { statusEl.textContent = yes ? 'Connected to Blynk (REST)' : 'Disconnected from Blynk'; statusEl.style.color = yes ? '#4ef0a0' : '#ff9a9a'; }
+  const connDetail = document.getElementById('connectionStatus');
+  if (connDetail) connDetail.textContent = yes ? 'REST OK' : 'Not connected';
+  const wifiBtn = $('#wifiBtn'); if (wifiBtn) { wifiBtn.classList.toggle('connected', yes); wifiBtn.classList.toggle('disconnected', !yes); }
+  const blynkInt = $('#blynkIntegrationStatus'); if (blynkInt) { blynkInt.textContent = yes ? 'Connected (REST)' : 'Not connected'; blynkInt.style.color = yes? '#4ef0a0' : '#ff9a9a'; }
+}
+
+function initBlynk(token) {
+  if (!token) { showPopupNotification('Blynk','No token provided'); return; }
+  blynkToken = token;
+  state.tokenInvalid = false;
+  saveTokenLocal(token);
+
+  // lenient token check — warn if suspiciously short but still attempt
+  if (typeof token !== 'string' || token.length < 16) {
+    console.warn('Blynk token looks short — attempting anyway');
+    showPopupNotification('Blynk Warning','Token looks short — still attempting to use it.');
+  }
+
+  // quick test by reading a harmless pin
+  getBlynkPin('V9').then(val => {
+    setBlynkUIConnected(true);
+    log('Blynk REST token loaded');
+    showPopupNotification('Blynk','Blynk REST initialized');
+    startBlynkPoll();
+  }).catch(err => {
+    console.warn('Token validation possibly failed', err);
+    showPopupNotification('Blynk Error','Token validation failed or network error. Check token and connectivity.');
+    setBlynkUIConnected(false);
+  });
+}
+
+function disconnectBlynk(){
+  if (blynkPollInterval) { clearInterval(blynkPollInterval); blynkPollInterval = null; }
+  blynkToken = '';
+  setBlynkUIConnected(false);
+  localStorage.removeItem('blynkToken');
+  $('#blynkTokenInput') && ($('#blynkTokenInput').value = '');
+  state.tokenInvalid = false;
+  log('Blynk disconnected (UI)');
+}
+
+/* Save token encrypted in localStorage */
+function saveTokenLocal(token){
+  try {
+    const deviceKey = SecurityModule.generateDeviceKey();
+    localStorage.setItem('blynkToken', SecurityModule.encrypt(token, deviceKey));
+  } catch(e){ console.warn('Failed to save token', e); }
+}
+
+/* send to update endpoint */
+function sendToBlynk(pin, value){
+  if (!blynkToken) return Promise.reject(new Error('No token'));
+  const url = `${BLYNK_API_BASE}/update?token=${encodeURIComponent(blynkToken)}&${encodeURIComponent(pin)}=${encodeURIComponent(String(value))}`;
+  return fetch(url, { method: 'GET' }).then(resp => {
+    if (!resp.ok) {
+      if (resp.status === 400 || resp.status === 401) {
+        state.tokenInvalid = true;
+        throw new Error(`HTTP ${resp.status}`);
+      }
+      throw new Error(`HTTP ${resp.status}`);
+    }
+    state.pollFailures = 0;
+    return resp.text();
+  }).then(txt => {
+    return txt;
+  }).catch(err => {
+    state.pollFailures = (state.pollFailures||0) + 1;
+    setBlynkUIConnected(false);
+    console.warn('Blynk REST send failed', err);
+    throw err;
+  });
+}
+
+/* get a single pin (get endpoint) returns resolved value or null on failure */
+function getBlynkPin(pin){
+  if (!blynkToken) return Promise.reject(new Error('No token'));
+
+  // IMPORTANT FIX:
+  // Blynk REST API expects:  .../get?token=xxxx&V0
+  // NOT: ...&pin=V0
+  const url = `${BLYNK_API_BASE}/get?token=${encodeURIComponent(blynkToken)}&${encodeURIComponent(pin)}`;
+
+  return fetch(url, { method: 'GET' })
+    .then(resp => {
+      if (!resp.ok) {
+        if (resp.status === 400 || resp.status === 401) {
+          state.tokenInvalid = true;
+          throw new Error(`HTTP ${resp.status}`);
+        }
+        throw new Error(`HTTP ${resp.status}`);
+      }
+      return resp.text();
+    })
+    .then(txt => {
+      try {
+        const parsed = JSON.parse(txt);
+        if (Array.isArray(parsed) && parsed.length) return parsed[0];
+        return parsed;
+      } catch(e) {
+        return txt.trim();
+      }
+    })
+    .catch(err => {
+      console.warn('getBlynkPin failed', pin, err);
+      return Promise.resolve(null);
+    });
+}
+
+/* Poll Blynk pins in sequence */
+function pollBlynkPinsOnce(){
+  if (!blynkToken) return;
+  if (state.tokenInvalid) {
+    console.warn('Token marked invalid; skipping poll');
+    setBlynkUIConnected(false);
+    return;
+  }
+  const pins = ['V0','V1','V2','V3','V4','V5','V6','V7','V8','V9','V10','V11','V12','V33','V25'];
+  pins.reduce((p, pin) => {
+    return p.then(()=> getBlynkPin(pin)).then(val => {
+      if (val === null || val === undefined) return;
+      if (/^V[0-7]$/.test(pin)) {
+        const idx = parseInt(pin.slice(1));
+        const v = (String(val).trim() === '1' || String(val).toLowerCase()==='true');
+        state.lights[idx].on = v;
+      } else if (pin === 'V8') {
+        // UI Heartbeat read (ignored)
+      } else if (pin === 'V9') {
+        const el = document.getElementById('espStatusText');
+        if (el) el.textContent = String(val).slice(0,80);
+      } else if (pin === 'V10') {
+        const pval = (String(val).trim() === '1' || String(val).toLowerCase()==='true');
+        handlePresenceChange(pval);
+      } else if (pin === 'V11') {
+        state.pir = (String(val).trim() === '1' || String(val).toLowerCase()==='true');
+        const t = $('#pirToggle'); if (t) t.checked = !!state.pir;
+      } else if (pin === 'V12') {
+        state.rcwl = (String(val).trim() === '1' || String(val).toLowerCase()==='true');
+        const t = $('#rcwlToggle'); if (t) t.checked = !!state.rcwl;
+      } else if (pin === 'V33') {
+        const parsed = parseInt(val);
+        if (!isNaN(parsed)) {
+          state.autoOffTimeout = parsed;
+          const el = $('#autoOffTimeout'); if (el) el.value = state.autoOffTimeout;
+        }
+      } else if (pin === 'V25') {
+        if (String(val).length) appendTerminalLine(`<device> ${String(val)}`);
+      }
+    });
+  }, Promise.resolve()).then(()=> {
+    renderLights();
+    setBlynkUIConnected(true);
+    state.pollFailures = 0;
+  }).catch(err => {
+    console.warn('Polling error', err);
+    state.pollFailures = (state.pollFailures||0) + 1;
+    if (state.pollFailures > 5) setBlynkUIConnected(false);
+  });
+}
+
+function startBlynkPoll(){
+  if (blynkPollInterval) clearInterval(blynkPollInterval);
+  pollBlynkPinsOnce();
+  blynkPollInterval = setInterval(pollBlynkPinsOnce, 6000);
+}
+function stopBlynkPoll(){ if (blynkPollInterval) { clearInterval(blynkPollInterval); blynkPollInterval = null; } }
+
+/* ---------- Heartbeat from UI to Blynk (REST) ---------- */
+setInterval(()=> {
+  if (blynkToken && blynkConnected) {
+    sendToBlynk('V8', 1).catch(()=>{/* ignore */});
+  }
+}, 8000);
+
+/* Send UI offline when close */
+window.addEventListener('beforeunload', ()=> {
+  if (blynkToken && blynkConnected) {
+    navigator.sendBeacon(`${BLYNK_API_BASE}/update?token=${encodeURIComponent(blynkToken)}&V8=0`);
+  }
+});
+
+/* ---------- Presence & Auto-Off logic (UI side) ---------- */
+function handlePresenceChange(presenceDetected){
+  const prev = state.presence;
+  state.presence = !!presenceDetected;
+  saveState();
+  const pd = $('#presDot'); if (pd) pd.classList.toggle('on', !!state.presence);
+  const pt = $('#presText'); if (pt) pt.textContent = state.presence ? 'Someone' : 'No one';
+  if (prev !== state.presence) {
+    if (state.presence) {
+      showPopupNotification('Presence Detected','Motion/presence detected in room');
+      log('Presence detected');
+      const led = $('#espStatusDot'); if (led) led.style.background = '#4ef0a0';
+    } else {
+      showPopupNotification('No Presence','No motion/presence detected');
+      log('No presence detected, scheduling auto-off if configured');
+      if (state.autoOffTimeout > 0) {
+        setTimeout(()=> {
+          if (!state.presence) {
+            state.lights.forEach(l=> l.on = false);
+            saveState(); renderLights();
+            updateBlynkLightsState();
+            sendBlynkNotification('Auto-Off','Lights turned off due to no presence');
+            log('Auto-off: Lights turned off (UI scheduled)');
+          }
+        }, state.autoOffTimeout * 1000);
+      }
+      const led = $('#espStatusDot'); if (led) led.style.background = state.espOnline ? '#4ef0a0' : '#ff6b6b';
+    }
+  }
+  if (blynkConnected) sendToBlynk('V10', state.presence ? 1 : 0).catch(()=>{});
+}
+
+/* ---------- Utilities to update Blynk from UI ---------- */
+function updateBlynkLightsState(){
+  state.lights.forEach((light, index) => {
+    if (blynkConnected) sendToBlynk(`V${index}`, light.on?1:0).catch(()=>{});
+  });
+}
+function updateBlynkModeIndicator(mode){
+  let modeValue = 0;
+  if (mode === 'teaching') modeValue = 1;
+  else if (mode === 'projector') modeValue = 2;
+  else if (mode === 'energy') modeValue = 3;
+  if (blynkConnected) sendToBlynk('V20', modeValue).catch(()=>{});
+}
+
+/* ---------- UI initialization & wiring ---------- */
+function initUI(){
+  console.log('initUI called');
+  renderLights();
+  renderRenameList();
+  renderSchedules();
+  renderTimers();
+  renderLogs();
+  populateTimerSelect();
+  if (state.wifiConnected) { $('#wifiBtn') && $('#wifiBtn').classList.add('connected'); }
+  $('#pirToggle') && ($('#pirToggle').checked = !!state.pir);
+  $('#rcwlToggle') && ($('#rcwlToggle').checked = !!state.rcwl);
+  $('#pirDelay') && ($('#pirDelay').value = state.pirDelay);
+  $('#rcwlRange') && ($('#rcwlRange').value = state.rcwlRange, $('#rcwlVal') && ($('#rcwlVal').textContent = state.rcwlRange + '%'));
+  $('#autoOffTimeout') && ($('#autoOffTimeout').value = state.autoOffTimeout);
+
+  // Mode buttons wiring
+  $('#modeTeaching') && $('#modeTeaching').addEventListener('click', () => {
+    addButtonAnimation('modeTeaching'); state.lights.forEach(l=> l.on = true); saveState(); renderLights(); if (blynkConnected) { updateBlynkModeIndicator('teaching'); updateBlynkLightsState(); } log('Teaching Mode applied (all ON)');
+  });
+  $('#modeProjector') && $('#modeProjector').addEventListener('click', () => { addButtonAnimation('modeProjector'); applyMode('projector'); if (blynkConnected) { updateBlynkModeIndicator('projector'); updateBlynkLightsState(); } });
+  $('#modeEnergy') && $('#modeEnergy').addEventListener('click', () => { addButtonAnimation('modeEnergy'); applyMode('energy'); if (blynkConnected) { updateBlynkModeIndicator('energy'); updateBlynkLightsState(); } });
+
+  initToolsListeners();
+  setupModeModal();
+
+  // attach modal openers/closers (if exist)
+  $('#wifiBtn')?.addEventListener('click', ()=> { addButtonAnimation('wifiBtn'); $('#wifiModal').style.display='flex'; document.body.style.overflow='hidden'; renderWifiList(); $('#autoOffTimeout').value = state.autoOffTimeout; });
+  $('#notificationBtn')?.addEventListener('click', ()=> { addButtonAnimation('notificationBtn'); updateNotificationModal(); $('#notificationModal').style.display='flex'; document.body.style.overflow='hidden'; const modal = $('#notificationModal .modal'); if (modal) modal.classList.add('notification-modal-slide-down'); const intId = setInterval(updateNotificationModal, 2000); $('#notificationModal').dataset.intervalId = intId; });
+  $('#closeNotification')?.addEventListener('click', ()=> { const m = $('#notificationModal'); if (m && m.dataset.intervalId) { clearInterval(parseInt(m.dataset.intervalId)); delete m.dataset.intervalId; } $('#notificationModal').style.display='none'; document.body.style.overflow=''; const modal = $('#notificationModal .modal'); if (modal) modal.classList.remove('notification-modal-slide-down'); });
+  $$('.modal-back').forEach(m => m.addEventListener('click', ev => { if (ev.target === m) { m.style.display='none'; document.body.style.overflow=''; } }));
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') { $$('.modal-back').forEach(m => m.style.display='none'); document.body.style.overflow=''; } });
+
+  // Terminal wiring
+  document.getElementById('terminalSend')?.addEventListener('click', ()=> {
+    const tInput = document.getElementById('terminalInput'); if (!tInput) return; const v = tInput.value.trim(); if(!v) return;
+    appendTerminalLine(`<sent> ${v}`); if (blynkConnected) sendToBlynk('V25', v).catch(()=> showMobileNotification('Error','Terminal send failed')); tInput.value='';
+  });
+}
+
+/* ---------- Page navigation ---------- */
+function initPageNavigation(){
+  const navItems = $$('.nav-item'); if (!navItems) return;
+  navItems.forEach(item => {
+    item.addEventListener('click', function(){
+      const page = this.getAttribute('data-page');
+      navItems.forEach(nav => nav.classList.remove('active'));
+      this.classList.add('active');
+      $('#homePage') && ($('#homePage').style.display = page === 'home' ? 'block' : 'none');
+      $('#timerPage') && ($('#timerPage').style.display = page === 'timer' ? 'block' : 'none');
+      $('#settingsPage') && ($('#settingsPage').style.display = page === 'settings' ? 'block' : 'none');
+    });
+  });
+}
+
+/* ---------- Mode apply helper ---------- */
+function applyMode(mode){
+  if (mode === 'projector') {
+    state.lights.forEach((l,i) => l.on = !!state.modeProjector[i]);
+    log('Projector Mode applied');
+  } else if (mode === 'energy') {
+    state.lights.forEach((l,i) => l.on = !!state.modeEnergy[i]);
+    log('Energy Saver applied');
+  }
+  saveState(); renderLights();
+}
+
+/* ---------- Init on DOM ready ---------- */
+document.addEventListener('DOMContentLoaded', function(){
+  console.log('DOM loaded — init UI');
+  initUI();
+  initPageNavigation();
+  (function autoInitToken(){
+    try {
+      const enc = localStorage.getItem('blynkToken');
+      if (enc) {
+        const token = SecurityModule.decrypt(enc, SecurityModule.generateDeviceKey());
+        if (token) {
+          $('#blynkTokenInput') && ($('#blynkTokenInput').value = token);
+          initBlynk(token);
+        }
+      } else {
+        const fallback = ''; // keep blank so user connects explicitly
+        if (fallback) { $('#blynkTokenInput') && ($('#blynkTokenInput').value = fallback); }
+      }
+    } catch(e){ console.warn('Auto token init failed', e); }
+  })();
+
+  // attach wifi modal close
+  $('#closeWifi')?.addEventListener('click', ()=> { $('#wifiModal').style.display='none'; document.body.style.overflow=''; });
+  // attach mode modal save/close
+  $('#modeSaveBtn')?.addEventListener('click', ()=> { addButtonAnimation('modeSaveBtn'); saveModeSettings(); });
+  $('#closeMode')?.addEventListener('click', ()=> { $('#modeModal').style.display='none'; document.body.style.overflow=''; });
+});
+
+/* ---------- Helper for sending Blynk notifications in UI ---------- */
+function sendBlynkNotification(title, message) {
+  showPopupNotification(title, message);
+}
+
+/* ---------- Notification Modal Update Function ---------- */
+function updateNotificationModal() {
+  try {
+    // Update ESP32 status
+    const espStatusText = document.getElementById('espStatusText');
+    const espIp = document.getElementById('espIp');
+    const espUptime = document.getElementById('espUptime');
+    const espLastSeen = document.getElementById('espLastSeen');
+    
+    if (espStatusText) espStatusText.textContent = state.espStatus || 'Offline';
+    if (espIp) espIp.textContent = state.espIp || '—';
+    if (espUptime) espUptime.textContent = state.espUptime || '—';
+    if (espLastSeen) espLastSeen.textContent = state.espLastSeen || '—';
+    
+    // Update connection status
+    const connectionStatusDetail = document.getElementById('connectionStatusDetail');
+    if (connectionStatusDetail) {
+      connectionStatusDetail.textContent = blynkConnected ? 'Connected (REST)' : 'Disconnected';
+      connectionStatusDetail.style.color = blynkConnected ? '#4ef0a0' : '#ff9a9a';
+    }
+    
+    // Update sensor statuses
+    const pirStatus = document.getElementById('pirStatus');
+    const rcwlStatus = document.getElementById('rcwlStatus');
+    const presenceStatus = document.getElementById('presenceStatus');
+    
+    if (pirStatus) pirStatus.textContent = state.pir ? 'Enabled' : 'Disabled';
+    if (rcwlStatus) rcwlStatus.textContent = state.rcwl ? 'Enabled' : 'Disabled';
+    if (presenceStatus) presenceStatus.textContent = state.presence ? 'Someone detected' : 'No one detected';
+    
+    // Update Blynk integration status
+    const blynkIntegrationStatus = document.getElementById('blynkIntegrationStatus');
+    if (blynkIntegrationStatus) {
+      blynkIntegrationStatus.textContent = blynkConnected ? 'Connected (REST)' : 'Not connected';
+      blynkIntegrationStatus.style.color = blynkConnected ? '#4ef0a0' : '#ff9a9a';
+    }
+    
+    // Update ESP status dot
+    const espStatusDot = document.getElementById('espStatusDot');
+    if (espStatusDot) {
+      if (blynkConnected && state.espOnline) {
+        espStatusDot.style.background = '#4ef0a0'; // Green for online
+      } else if (blynkConnected) {
+        espStatusDot.style.background = '#ffeb3b'; // Yellow for connected but offline
+      } else {
+        espStatusDot.style.background = '#ff6b6b'; // Red for disconnected
+      }
+    }
+  } catch (e) {
+    console.warn('Error updating notification modal:', e);
+  }
+}
+
+/* --- UI Patch: fix notification, setup, rename, tools wiring --- */
+
+(function(){
+
+  function safe(id){ return document.getElementById(id) || null; }
+
+  // Toggle modal helper
+  function showModal(modalEl){
+    if(!modalEl) return;
+    modalEl.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+  
+  function hideModal(modalEl){
+    if(!modalEl) return;
+    modalEl.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  // Ensure notification button opens notification modal
+  document.addEventListener('DOMContentLoaded', function(){
+    try{
+      // Notification button
+      const notificationBtn = safe('notificationBtn');
+      const notificationModal = safe('notificationModal');
+      const closeNotification = safe('closeNotification');
+
+      if(notificationBtn && notificationModal){
+        notificationBtn.removeEventListener && notificationBtn.removeEventListener('click', null);
+        notificationBtn.addEventListener('click', function(){
+          addButtonAnimation && addButtonAnimation('notificationBtn');
+          updateNotificationModal && updateNotificationModal();
+          showModal(notificationModal);
+          // refresh notification modal contents periodically while open
+          if(!notificationModal.dataset.intervalId){
+            const id = setInterval(function(){ try{ updateNotificationModal && updateNotificationModal(); }catch(e){} }, 2000);
+            notificationModal.dataset.intervalId = id;
+          }
+        });
+      }
+      
+      if(closeNotification && notificationModal){
+        closeNotification.addEventListener('click', function(){
+          addButtonAnimation && addButtonAnimation('closeNotification');
+          if(notificationModal.dataset.intervalId){ clearInterval(parseInt(notificationModal.dataset.intervalId)); delete notificationModal.dataset.intervalId; }
+          hideModal(notificationModal);
+        });
+      }
+      
+      // Clicking backdrop closes
+      document.querySelectorAll('.modal-back').forEach(function(back){
+        back.addEventListener('click', function(e){
+          if(e.target === back){
+            if(back.dataset.intervalId){ clearInterval(parseInt(back.dataset.intervalId)); delete back.dataset.intervalId; }
+            hideModal(back);
+          }
+        });
+      });
+    }catch(e){ console.warn('Notification patch error', e); }
+
+    try{
+      // Setup Mode button fix (in HOME or Settings -> opens Mode modal)
+      const openSetup = safe('openSetup');
+      const modeModal = safe('modeModal');
+      if(openSetup){
+        openSetup.addEventListener('click', function(){
+          addButtonAnimation && addButtonAnimation('openSetup');
+          if(typeof openModeSelectionModal === 'function'){
+            openModeSelectionModal();
+          } else if(modeModal){
+            showModal(modeModal);
+            // populate a default grid if empty
+            const grid = document.getElementById('modeModalGrid');
+            if(grid && grid.children.length===0){
+              grid.innerHTML = '<div class="mode-selection" data-mode="projector"><div class="mode-chip">Projector</div></div><div class="mode-selection" data-mode="energy"><div class="mode-chip">Energy Saver</div></div>';
+              grid.querySelectorAll('.mode-selection').forEach(el=>{
+                el.addEventListener('click', function(){ const m = el.dataset.mode || 'projector'; if(typeof openModeModal==='function') openModeModal(m); });
+              });
+            }
+          }
+        });
+      }
+      
+      // close button on mode modal
+      const closeMode = safe('closeMode');
+      if(closeMode && modeModal){
+        closeMode.addEventListener('click', function(){
+          addButtonAnimation && addButtonAnimation('closeMode');
+          hideModal(modeModal);
+        });
+      }
+    }catch(e){ console.warn('Mode modal patch error', e); }
+
+    try{
+      // Rename lights wiring: ensure inputs have data-rename and Save/Reset wired
+      // renderRenameList already creates inputs with data-rename. Ensure save button works.
+      const saveRename = safe('saveRename');
+      const resetNames = safe('resetNames');
+      if(saveRename){
+        saveRename.addEventListener('click', function(){
+          addButtonAnimation && addButtonAnimation('saveRename');
+          // find inputs created by renderRenameList
+          document.querySelectorAll('input[data-rename]').forEach(function(inp){
+            const id = Number(inp.dataset.rename);
+            const v = String(inp.value || '').trim();
+            if(!Number.isNaN(id) && v){
+              if(state && state.lights && state.lights[id]) state.lights[id].name = v;
+            }
+          });
+          saveState && saveState();
+          renderLights && renderLights();
+          renderRenameList && renderRenameList();
+          populateTimerSelect && populateTimerSelect();
+          log && log('Saved light names (UI patch)');
+          showMobileNotification && showMobileNotification('Rename', 'Names saved');
+        });
+      }
+      
+      if(resetNames){
+        resetNames.addEventListener('click', function(){
+          addButtonAnimation && addButtonAnimation('resetNames');
+          if(confirm('Reset all names and settings to defaults?')){
+            if(typeof defaultState === 'function'){
+              state = defaultState();
+              saveState && saveState();
+              initUI && initUI();
+              log && log('Reset to defaults (UI patch)');
+              showMobileNotification && showMobileNotification('Reset', 'Defaults restored');
+            }
+          }
+        });
+      }
+    }catch(e){ console.warn('Rename patch error', e); }
+
+    try{
+      // Tools wiring: refresh, restart, clear logs, export config
+      const refreshBtn = safe('refreshBtn');
+      const restartBtn = safe('restartBtn');
+      const clearLogsBtn = safe('clearLogsBtn');
+      const exportConfigBtn = safe('exportConfigBtn');
+
+      if(refreshBtn){
+        refreshBtn.addEventListener('click', function(){
+          addButtonAnimation && addButtonAnimation('refreshBtn');
+          if(blynkConnected){
+            sendToBlynk && sendToBlynk('V12', 1).catch(()=>{});
+            showMobileNotification && showMobileNotification('Refresh', 'Refresh requested');
+          } else {
+            showMobileNotification && showMobileNotification('Error','Not connected to Blynk');
+          }
+        });
+      }
+      
+      if(restartBtn){
+        restartBtn.addEventListener('click', function(){
+          addButtonAnimation && addButtonAnimation('restartBtn');
+          if(blynkConnected){
+            sendToBlynk && sendToBlynk('V21', 1).catch(()=>{});
+            showMobileNotification && showMobileNotification('Restart','Restart command sent');
+          } else {
+            showMobileNotification && showMobileNotification('Error','Not connected to Blynk');
+          }
+        });
+      }
+      
+      if(clearLogsBtn){
+        clearLogsBtn.addEventListener('click', function(){
+          addButtonAnimation && addButtonAnimation('clearLogsBtn');
+          if(state){ state.logs = []; saveState && saveState(); renderLogs && renderLogs(); }
+          showMobileNotification && showMobileNotification('Logs', 'Logs cleared');
+        });
+      }
+      
+      if(exportConfigBtn){
+        exportConfigBtn.addEventListener('click', function(){
+          addButtonAnimation && addButtonAnimation('exportConfigBtn');
+          const config = { lights: state.lights, pir: state.pir, rcwl: state.rcwl, pirDelay: state.pirDelay, rcwlRange: state.rcwlRange, wifiDefault: state.wifiCreds && state.wifiCreds[state.wifiDefaultIndex] || null, autoOffTimeout: state.autoOffTimeout };
+          const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(config, null, 2));
+          const a = document.createElement('a'); a.setAttribute('href', dataStr); a.setAttribute('download', 'smartlight_config.json'); document.body.appendChild(a); a.click(); a.remove();
+          showMobileNotification && showMobileNotification('Export', 'Configuration exported');
+        });
+      }
+    }catch(e){ console.warn('Tools patch error', e); }
+
+    try{
+      // Fix: Mode buttons highlight and actions
+      const modeTeaching = safe('modeTeaching'), modeProjector = safe('modeProjector'), modeEnergy = safe('modeEnergy');
+      [modeTeaching, modeProjector, modeEnergy].forEach(btn=>{
+        if(!btn) return;
+        btn.addEventListener('click', function(){
+          addButtonAnimation && addButtonAnimation(btn.id || 'modeBtn');
+          // set active class
+          document.querySelectorAll('.mode').forEach(m => m.classList.remove('active'));
+          btn.classList.add('active');
+          // call existing handlers
+          if(btn.id === 'modeTeaching'){ state.lights.forEach(l=> l.on = true); saveState && saveState(); renderLights && renderLights(); updateBlynkModeIndicator && updateBlynkModeIndicator('teaching'); updateBlynkLightsState && updateBlynkLightsState(); }
+          if(btn.id === 'modeProjector'){ applyMode && applyMode('projector'); updateBlynkModeIndicator && updateBlynkModeIndicator('projector'); updateBlynkLightsState && updateBlynkLightsState(); }
+          if(btn.id === 'modeEnergy'){ applyMode && applyMode('energy'); updateBlynkModeIndicator && updateBlynkModeIndicator('energy'); updateBlynkLightsState && updateBlynkLightsState(); }
+        });
+      });
+    }catch(e){ console.warn('Mode buttons patch error', e); }
+
+    try{
+      // Nav items: ensure page switching works even if initPageNavigation missed
+      const navItems = document.querySelectorAll('.nav-item');
+      if(navItems && navItems.length){
+        navItems.forEach(item => item.addEventListener('click', function(){
+          navItems.forEach(n => n.classList.remove('active'));
+          item.classList.add('active');
+          const page = item.getAttribute('data-page');
+          if(page === 'home'){ safe('homePage').style.display='block'; safe('timerPage').style.display='none'; safe('settingsPage').style.display='none'; }
+          if(page === 'timer'){ safe('homePage').style.display='none'; safe('timerPage').style.display='block'; safe('settingsPage').style.display='none'; }
+          if(page === 'settings'){ safe('homePage').style.display='none'; safe('timerPage').style.display='none'; safe('settingsPage').style.display='block'; }
+        }));
+      }
+      
+      // Settings tabs: handle tab switching
+      const settingsTabs = document.querySelectorAll('.settings-tab');
+      if(settingsTabs && settingsTabs.length){
+        settingsTabs.forEach(tab => tab.addEventListener('click', function(){
+          // Remove active class from all tabs
+          document.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active'));
+          // Add active class to clicked tab
+          tab.classList.add('active');
+          
+          // Hide all tab content
+          safe('tabSensors').style.display = 'none';
+          safe('tabRename').style.display = 'none';
+          safe('tabTools').style.display = 'none';
+          
+          // Show the selected tab content
+          const tabId = tab.getAttribute('data-tab');
+          if(tabId){
+            const tabContent = safe(tabId);
+            if(tabContent){
+              tabContent.style.display = 'block';
+            }
+          }
+        }));
+      }
+    }catch(e){ console.warn('Nav patch error', e); }
+    try{
+      // Make sure rename inputs are re-rendered if empty
+      if(typeof renderRenameList === 'function'){
+        renderRenameList();
+      }
+      // Ensure timers select exists
+      if(typeof populateTimerSelect === 'function'){
+        populateTimerSelect();
+      }
+      // Ensure lights rendering runs once more
+      if(typeof renderLights === 'function'){
+        renderLights();
+      }
+    }catch(e){ console.warn('Final render patch error', e); }
+    
+    // Quick wifi button visual toggle helper (UI only)
+    try{
+      const wifiBtn = safe('wifiBtn');
+      const blynkStatus = safe('blynkStatus');
+      
+      function applyWifiVisual(){
+        if(blynkConnected){
+          wifiBtn && wifiBtn.classList.remove('disconnected');
+          wifiBtn && wifiBtn.classList.add('connected');
+          if(blynkStatus) { blynkStatus.textContent = 'Connected to Blynk (REST)'; blynkStatus.style.color = '#4ef0a0'; }
+        } else {
+          wifiBtn && wifiBtn.classList.remove('connected');
+          wifiBtn && wifiBtn.classList.add('disconnected');
+          if(blynkStatus) { blynkStatus.textContent = 'Not connected'; blynkStatus.style.color = '#ff9a9a'; }
+        }
+      }
+      
+      // watch blynkConnected changes 
+      setInterval(applyWifiVisual, 1200);
+
+    }catch(e){ /* ignore */ }
+  });
+})();
+
+/* ---------- Misc helpers ---------- */
+window.SmartBoardUI = {
+  state, saveState, renderLights, initBlynk, disconnectBlynk, sendToBlynk, getBlynkPin, pollBlynkPinsOnce, startBlynkPoll, stopBlynkPoll, appendTerminalLine, log
+};
+
+console.log('SmartBoard UI script ready.');</script>
+</body>
+</html>
