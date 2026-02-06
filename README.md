@@ -4,7 +4,7 @@ You can **copy–paste directly into your GitHub README.md** and edit the repo l
 ---
 
 # 🧠 SmartSwitch – Smart Classroom Control UI
-(https://github.com/DemonAquarius/smartlight.git)
+(https://onebotyt.github.io/Smart-switch-board-/)
 
 A modern, animated and feature-rich web dashboard for controlling an **ESP32-based Smart Classroom System**.
 This UI works with **Blynk REST API**, **ESP32 Wi-Fi manager**, **presence detection**, **smart modes**, **schedules**, **timers**, and **advanced configuration tools**.
