@@ -2,6 +2,7 @@
 
 # 🧠 SmartSwitch – Smart Classroom Control UI
 (https://onebotyt.github.io/Smart-switch-board-/)
+(https://youtu.be/AFeXMyddqB8?si=l5FJDO8j0TEYIvUi)
 
 A modern, animated and feature-rich web dashboard for controlling an **ESP32-based Smart Classroom System**.
 This UI works with **Blynk REST API**, **ESP32 Wi-Fi manager**, **presence detection**, **smart modes**, **schedules**, **timers**, and **advanced configuration tools**.
