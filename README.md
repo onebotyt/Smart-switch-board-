@@ -1,7 +1,4 @@
-Below is a **clean, well-structured, professional README.md** for your **SmartSwitch / SmartClass UI project**.
-You can **copy–paste directly into your GitHub README.md** and edit the repo links later.
 
----
 
 # 🧠 SmartSwitch – Smart Classroom Control UI
 (https://onebotyt.github.io/Smart-switch-board-/)
